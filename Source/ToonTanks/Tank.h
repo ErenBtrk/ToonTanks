@@ -20,6 +20,12 @@ class TOONTANKS_API ATank : public ABasePawn
 public:
 	ATank();
 
+	void HandleDestruction();
+
+	APlayerController* GetTankPlayerController()const;
+
+	bool bAlive = true;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -44,5 +50,5 @@ private:
 	void Move(float Value);
 	void Turn(float Value);
 
-	APlayerController* PlayerControllerRef;
+	APlayerController* TankPlayerController;
 };

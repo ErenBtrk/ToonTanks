@@ -29,7 +29,11 @@ void ATurret::BeginPlay()
 
 void ATurret::CheckFireCondition()
 {
-	if (InFireRange())
+	if (!Tank)
+	{
+		return;
+	}
+	if (InFireRange() && Tank->bAlive)
 	{
 		Fire();
 	}
@@ -48,4 +52,10 @@ bool ATurret::InFireRange()const
 	}
 
 	return false;
+}
+
+void ATurret::HandleDestruction()
+{
+	Super::HandleDestruction();
+	Destroy();
 }

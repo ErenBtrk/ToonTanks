@@ -5,6 +5,9 @@
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "Projectile.h"
+#include "Particles/ParticleSystem.h"
+
 
 
 // Sets default values
@@ -20,7 +23,7 @@ ABasePawn::ABasePawn()
 	TurretMesh->SetupAttachment(BaseMesh);
 	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Projectile Spawn Point"));
 	ProjectileSpawnPoint->SetupAttachment(TurretMesh);
-
+	
 }
 
 
@@ -35,7 +38,16 @@ void ABasePawn::RotateTurret(FVector LookAtTarget)
 void ABasePawn::Fire()
 {
 	DrawDebugSphere(GetWorld(), ProjectileSpawnPoint->GetComponentLocation(), 20.f, 12, FColor::Blue, false, 3.f);
+	AProjectile* ProjectileSpawned = GetWorld()->SpawnActor<AProjectile>(ProjectileClass,ProjectileSpawnPoint->GetComponentLocation(), ProjectileSpawnPoint->GetComponentRotation());
+	ProjectileSpawned->SetOwner(this);
 }
 
-
-
+void ABasePawn::HandleDestruction()
+{
+	if(DeathParticles)
+		UGameplayStatics::SpawnEmitterAtLocation(this, DeathParticles, GetActorLocation(), GetActorRotation());
+	if (DeathSound)
+		UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation());
+	if (DeathCameraShakeClass)
+		GetWorld()->GetFirstPlayerController()->ClientStartCameraShake(DeathCameraShakeClass);
+}
